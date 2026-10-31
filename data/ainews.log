@@ -1,0 +1,21 @@
+[09:52:40] Fetching 16 feeds…
+[09:52:45]   ! Google DeepMind: not well-formed (invalid token): line 1, column 0
+[09:52:45]   ! r/MachineLearning: HTTP Error 429: Too Many Requests
+[09:52:45] 51 items fetched, 0 new.
+[09:52:50]   [1/11] 3★ Backdoors in official Claude Code extensions (5.5s)
+[09:52:53]   [2/11] 4★ Claude Code VS Code extension with backdoor released on Cursor marketp (2.8s)
+[09:52:57]   [3/11] 3★ Making it easier for websites to express AI training preferences (3.9s)
+[09:53:03]   [4/11] 3★ Community safety report and new protections for teens (5.7s)
+[09:53:08]   [5/11] 3★ Fair use benefits everyone (5.4s)
+[09:53:12]   [6/11] 3★ API credits benefit for eligible ChatGPT subscriptions (4.4s)
+[09:53:19]   [7/11] 3★ Microsoft Research Focus – Edition #97 (6.6s)
+[09:53:23]   [8/11] 3★ Trump declares robot imports a national security threat (3.8s)
+[09:53:28]   [9/11] 4★ Building a multiplayer game world with autonomous Fable-class models (5.4s)
+[09:53:34]   [10/11] 3★ An updated Model Spec for more capable and beneficial AI (5.9s)
+[09:53:38]   [11/11] 3★ Google admits AI search makes less money, but it's fixing that with mo (3.9s)
+[09:53:38] Digest updated: /Users/pranavwankhedkar/new_code/ai-news-alert/digest.html
+[10:31:28] Fetching 16 feeds…
+[10:31:35]   ! Hacker News: HTTP Error 502: Bad Gateway
+[10:31:35]   ! r/MachineLearning: HTTP Error 429: Too Many Requests
+[10:31:35] 40 items fetched, 0 new.
+[10:31:35] Digest updated: /Users/pranavwankhedkar/new_code/ai-news-alert/digest.html

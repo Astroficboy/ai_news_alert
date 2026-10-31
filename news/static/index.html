@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI News</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234c5fd5'/%3E%3Ccircle cx='16' cy='16' r='4' fill='white'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='white' stroke-width='2' opacity='.6'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f5f4f0;--panel:#fff;--panel-2:#faf9f6;--text:#1b1b1f;--muted:#66656d;--faint:#9b9aa2;--line:#e5e3dd;
+  --accent:#4c5fd5;--accent-soft:#eceffd;--hot:#e2580b;--hot-soft:#fff2e8;--ok:#1f9d55;
+  --shadow:0 1px 2px rgba(20,20,30,.04),0 6px 20px rgba(20,20,30,.05);--radius:14px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e0e11;--panel:#17171b;--panel-2:#1c1c21;--text:#ececf1;--muted:#a3a3ad;--faint:#6f6f79;--line:#2a2a31;
+  --accent:#8d9cff;--accent-soft:#22264a;--hot:#ff8d4f;--hot-soft:#2b1c13;--ok:#4ade80;--shadow:none;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e0e11;--panel:#17171b;--panel-2:#1c1c21;--text:#ececf1;--muted:#a3a3ad;--faint:#6f6f79;--line:#2a2a31;
+  --accent:#8d9cff;--accent-soft:#22264a;--hot:#ff8d4f;--hot-soft:#2b1c13;--ok:#4ade80;--shadow:none;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+svg{width:16px;height:16px;flex:none}
+
+/* header */
+.top{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1240px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.01em;white-space:nowrap}
+.logo{width:28px;height:28px;border-radius:8px;background:var(--accent);display:grid;place-items:center}
+.logo i{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px color-mix(in srgb,#fff 35%,transparent)}
+.search{flex:1;max-width:520px;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:0 10px;color:var(--faint)}
+.search:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.search input{flex:1;border:0;background:none;outline:none;font:inherit;color:var(--text);padding:8px 0;min-width:0}
+.search kbd{font:11px ui-monospace,monospace;border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--faint)}
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{padding:4px 10px;border-radius:7px;font-size:13px;color:var(--muted)}
+.seg button.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.spacer{flex:1}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:10px;border:1px solid var(--line);background:var(--panel);font-size:13.5px;font-weight:550;white-space:nowrap}
+.btn:hover{border-color:var(--faint)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn[disabled]{opacity:.85;cursor:default}
+.icon-btn{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--muted)}
+.spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+
+/* layout */
+.wrap{max-width:1240px;margin:0 auto;padding:22px 20px 80px;display:grid;grid-template-columns:230px minmax(0,1fr);gap:28px}
+aside{position:sticky;top:78px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;padding-right:4px}
+.side-h{font-size:11px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:20px 10px 6px}
+.side-h:first-child{margin-top:0}
+.nav{display:flex;align-items:center;gap:9px;width:100%;padding:6px 10px;border-radius:9px;color:var(--muted);font-size:14px;text-align:left}
+.nav:hover{background:var(--panel)}
+.nav.on{background:var(--panel);color:var(--text);font-weight:600;box-shadow:var(--shadow)}
+.nav .n{margin-left:auto;font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums}
+.nav.on .n{color:var(--accent)}
+.sw{width:8px;height:8px;border-radius:3px;flex:none}
+.av{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:700;color:#fff;flex:none;background:hsl(var(--h) 55% 50%)}
+
+/* status */
+.status{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:18px;flex-wrap:wrap}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.status.busy .pulse{background:var(--accent);animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.3}}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;padding:2px 6px 2px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:550}
+.pill button{width:18px;height:18px;border-radius:50%;display:grid;place-items:center}
+.pill button:hover{background:color-mix(in srgb,var(--accent) 20%,transparent)}
+
+/* top stories */
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-bottom:30px}
+.feature{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.feature::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--hot)}
+.feature .title{font-size:16.5px}
+.feature .summary{-webkit-line-clamp:5}
+.feature .actions{position:absolute;top:10px;right:10px;flex-direction:row}
+
+h2.sec{font-size:13px;font-weight:650;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;display:flex;align-items:center;gap:10px}
+h2.sec .rule{flex:1;height:1px;background:var(--line)}
+h2.sec .link{font-size:12.5px;text-transform:none;letter-spacing:0;color:var(--accent);font-weight:550}
+
+/* story list */
+.day{margin-bottom:26px}
+.list{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.story{display:flex;gap:14px;padding:15px 16px 15px 18px;border-top:1px solid var(--line);position:relative;transition:background .12s}
+.list .story:first-child{border-top:0}
+.story::after{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:transparent}
+.story.i5::after{background:var(--hot)}
+.story.i4::after{background:color-mix(in srgb,var(--hot) 55%,transparent)}
+.story:hover{background:var(--panel-2)}
+.story.focused{background:var(--accent-soft)}
+.feature.focused{outline:2px solid var(--accent);outline-offset:-1px}
+.story-main{flex:1;min-width:0}
+.meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin-bottom:5px}
+.meta .src{font-weight:600;color:var(--text)}
+.meta .sep{color:var(--faint)}
+.chip{font-size:11.5px;font-weight:600;padding:1px 8px;border-radius:999px;color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}
+.imp{display:inline-flex;gap:2px;margin-left:2px}
+.imp i{width:5px;height:11px;border-radius:2px;background:var(--line)}
+.imp i.on{background:var(--hot)}
+.title{display:block;color:var(--text);font-weight:650;font-size:15.5px;line-height:1.35;text-decoration:none;letter-spacing:-.005em}
+.title:hover{color:var(--accent)}
+.summary{margin:5px 0 0;color:var(--muted);font-size:14.2px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{font-size:12px;color:var(--faint);padding:0 2px}
+.tag:hover{color:var(--accent)}
+.story.read .title,.feature.read .title{color:var(--muted);font-weight:550}
+.story.read .summary{opacity:.75}
+.unread-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block}
+.actions{display:flex;flex-direction:column;gap:4px;opacity:.35;transition:opacity .12s}
+.story:hover .actions,.feature:hover .actions,.story.focused .actions,.actions .act.on{opacity:1}
+.story:hover .actions,.feature:hover .actions,.story.focused .actions{opacity:1}
+.act{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--faint)}
+.act:hover{background:var(--line);color:var(--text)}
+.act.save.on{color:#e0a100}
+.act.save.on svg{fill:currentColor}
+.act.readbtn.on{color:var(--ok)}
+
+.empty{text-align:center;padding:70px 20px;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:var(--radius)}
+.empty b{display:block;color:var(--text);font-size:17px;margin-bottom:4px}
+.foot{margin-top:30px;font-size:12px;color:var(--faint);display:flex;gap:14px;flex-wrap:wrap}
+.foot kbd{font:11px ui-monospace,monospace;border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-right:3px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;font-weight:550;transition:.25s;pointer-events:none;z-index:10;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.skeleton{height:110px;border-radius:var(--radius);background:linear-gradient(90deg,var(--panel),var(--panel-2),var(--panel));background-size:200% 100%;animation:sk 1.2s infinite;margin-bottom:12px;border:1px solid var(--line)}
+@keyframes sk{to{background-position:-200% 0}}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr;gap:14px;padding-top:14px}
+  aside{position:static;max-height:none;overflow:visible;display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+  aside .side-h,aside .src-sec{display:none}
+  .nav{width:auto;white-space:nowrap;background:var(--panel);border:1px solid var(--line)}
+  .nav .n{margin-left:4px}
+  .top-in{flex-wrap:wrap;padding:10px 16px}
+  .search{order:5;flex-basis:100%;max-width:none}
+  .search kbd,.foot{display:none}
+  .btn .lbl{display:none}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <div class="brand"><div class="logo"><i></i></div>AI News</div>
+  <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Search stories, companies, models…" autocomplete="off"><kbd>/</kbd></label>
+  <div class="spacer"></div>
+  <div class="seg" id="range"><button data-d="1">24h</button><button data-d="3">3d</button><button data-d="7">7d</button></div>
+  <button class="btn primary" id="refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5"/></svg><span class="lbl">Refresh</span></button>
+  <button class="icon-btn" id="theme" title="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/></svg></button>
+</div></header>
+
+<div class="wrap">
+  <aside id="side"></aside>
+  <main>
+    <div class="status" id="status"><span class="pulse"></span><span id="status-text">Loading…</span><div class="filters" id="filters"></div></div>
+    <div id="content"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+    <div class="foot"><span><kbd>j</kbd><kbd>k</kbd>move</span><span><kbd>o</kbd>open</span><span><kbd>s</kbd>save</span><span><kbd>m</kbd>read/unread</span><span><kbd>/</kbd>search</span><span><kbd>r</kbd>refresh</span></div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("ainews." + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("ainews." + k, JSON.stringify(v)); } catch {} },
+};
+async function api(path, body) {
+  const opt = body === undefined ? {} : {method: "POST", headers: {"Content-Type": "application/json", "X-AINews": "1"}, body: JSON.stringify(body)};
+  const r = await fetch(path, opt);
+  if (!r.ok) throw new Error(path + " " + r.status);
+  return r.json();
+}
+
+const CAT = {"Model release":"#8b5cf6","Product":"#3b82f6","Research":"#0d9488","Open source":"#16a34a",
+  "Funding & business":"#d97706","Policy & safety":"#e11d48","Hardware":"#64748b","Tools & tutorials":"#0891b2","Other":"#8a8a93"};
+const VIEWS = [
+  ["inbox", "Inbox", '<path d="M3 13h5l1.5 3h5L16 13h5M5 5h14l2 8v6H3v-6z"/>'],
+  ["top", "Top stories", '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'],
+  ["all", "All stories", '<path d="M4 6h16M4 12h16M4 18h10"/>'],
+  ["saved", "Saved", '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/>'],
+];
+const ICON = {
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:11px;height:11px"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+};
+
+const S = {
+  items: [], view: store.get("view", "inbox"), days: store.get("days", 3), cat: null, source: null, q: "",
+  focus: -1, order: [], keep: new Set(), lastRun: undefined, running: false, loaded: false,
+};
+
+const hue = s => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7);
+const ago = iso => {
+  const m = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (m < 1) return "just now"; if (m < 60) return m + "m ago";
+  const h = Math.round(m / 60); if (h < 24) return h + "h ago";
+  return Math.round(h / 24) + "d ago";
+};
+const dayLabel = d => {
+  const t = new Date(); t.setHours(0,0,0,0);
+  const x = new Date(d); x.setHours(0,0,0,0);
+  const diff = Math.round((t - x) / 86400000);
+  if (diff === 0) return "Today"; if (diff === 1) return "Yesterday";
+  return x.toLocaleDateString(undefined, {weekday: "long", day: "numeric", month: "short"});
+};
+const inRange = it => Date.now() - new Date(it.published) <= S.days * 86400000;
+const byId = id => S.items.find(i => i.id === id);
+
+function inView(it, view = S.view) {
+  if (view === "saved") return it.is_saved;
+  if (!inRange(it)) return false;
+  if (view === "inbox") return !it.is_read || S.keep.has(it.id);
+  if (view === "top") return it.importance >= 4;
+  return true;
+}
+function matches(it) {
+  if (S.cat && it.category !== S.cat) return false;
+  if (S.source && it.source !== S.source) return false;
+  if (S.q) {
+    const hay = (it.title + " " + it.summary + " " + it.source + " " + it.category + " " + it.tags.join(" ")).toLowerCase();
+    if (!S.q.toLowerCase().split(/\s+/).every(w => hay.includes(w))) return false;
+  }
+  return true;
+}
+
+function renderSide() {
+  const count = v => S.items.filter(i => inView(i, v) && (v !== "inbox" || !i.is_read)).length;
+  const base = S.items.filter(i => inView(i));
+  const tally = key => Object.entries(base.reduce((a, i) => (a[i[key]] = (a[i[key]] || 0) + 1, a), {})).sort((a, b) => b[1] - a[1]);
+  let h = '<div class="side-h">Views</div>';
+  for (const [v, label, path] of VIEWS)
+    h += `<button class="nav ${S.view === v ? "on" : ""}" data-view="${v}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">${path}</svg>${label}<span class="n">${count(v) || ""}</span></button>`;
+  h += '<div class="side-h">Categories</div>';
+  for (const [c, n] of tally("category"))
+    h += `<button class="nav ${S.cat === c ? "on" : ""}" data-cat="${esc(c)}"><span class="sw" style="background:${CAT[c] || CAT.Other}"></span>${esc(c)}<span class="n">${n}</span></button>`;
+  h += '<div class="src-sec"><div class="side-h">Sources</div>';
+  for (const [s, n] of tally("source"))
+    h += `<button class="nav ${S.source === s ? "on" : ""}" data-source="${esc(s)}"><span class="av" style="--h:${hue(s)}">${esc(s.replace(/^r\//, "")[0])}</span>${esc(s)}<span class="n">${n}</span></button>`;
+  $("#side").innerHTML = h + "</div>";
+}
+
+function impBars(n) { return `<span class="imp" title="Importance ${n}/5">${[1,2,3,4,5].map(i => `<i class="${i <= n ? "on" : ""}"></i>`).join("")}</span>`; }
+
+function storyHTML(it, cls) {
+  const c = CAT[it.category] || CAT.Other;
+  return `<article class="${cls} i${it.importance} ${it.is_read ? "read" : ""}" data-id="${it.id}">
+    <div class="story-main">
+      <div class="meta">${it.is_read ? "" : '<span class="unread-dot" title="Unread"></span>'}
+        <span class="av" style="--h:${hue(it.source)}">${esc(it.source.replace(/^r\//, "")[0])}</span>
+        <span class="src">${esc(it.source)}</span><span class="sep">·</span>
+        <time title="${esc(new Date(it.published).toLocaleString())}">${ago(it.published)}</time>
+        <span class="chip" style="--c:${c}">${esc(it.category)}</span>${impBars(it.importance)}</div>
+      <a class="title" href="${esc(it.link)}" target="_blank" rel="noopener">${esc(it.title)}</a>
+      <p class="summary">${esc(it.summary)}</p>
+      ${it.tags.length ? `<div class="tags">${it.tags.map(t => `<button class="tag" data-tag="${esc(t)}">#${esc(t)}</button>`).join("")}</div>` : ""}
+    </div>
+    <div class="actions">
+      <button class="act save ${it.is_saved ? "on" : ""}" data-act="save" title="${it.is_saved ? "Unsave" : "Save"} (s)">${ICON.star}</button>
+      <button class="act readbtn ${it.is_read ? "on" : ""}" data-act="read" title="Mark as ${it.is_read ? "unread" : "read"} (m)">${ICON.check}</button>
+    </div></article>`;
+}
+
+function render() {
+  renderSide();
+  document.querySelectorAll("#range button").forEach(b => b.classList.toggle("on", +b.dataset.d === S.days));
+  const pills = [];
+  if (S.cat) pills.push(["cat", S.cat]);
+  if (S.source) pills.push(["source", S.source]);
+  if (S.q) pills.push(["q", `“${S.q}”`]);
+  $("#filters").innerHTML = pills.map(([k, v]) => `<span class="pill">${esc(v)}<button data-clear="${k}" title="Clear">${ICON.x}</button></span>`).join("");
+
+  if (!S.loaded) return;
+  const items = S.items.filter(i => inView(i) && matches(i));
+  const byRank = (a, b) => b.importance - a.importance || new Date(b.published) - new Date(a.published);
+  let html = "", featured = [];
+  if ((S.view === "inbox" || S.view === "all") && !S.cat && !S.source && !S.q) {
+    featured = items.filter(i => i.importance >= 4).sort(byRank).slice(0, 3);
+    if (featured.length)
+      html += `<h2 class="sec">Top stories<span class="rule"></span></h2><div class="feature-grid">${featured.map(i => storyHTML(i, "feature story-card")).join("")}</div>`;
+  }
+  const fset = new Set(featured.map(i => i.id));
+  const rest = items.filter(i => !fset.has(i.id));
+  const groups = new Map();
+  for (const it of rest.sort((a, b) => new Date(b.published) - new Date(a.published))) {
+    const k = dayLabel(it.published);
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(it);
+  }
+  let first = true;
+  for (const [day, list] of groups) {
+    const action = first && S.view === "inbox" && items.some(i => !i.is_read) ? '<button class="link" id="mark-all">Mark all as read</button>' : "";
+    html += `<section class="day"><h2 class="sec">${esc(day)} <span style="color:var(--faint);font-weight:500">${list.length}</span><span class="rule"></span>${action}</h2>
+      <div class="list">${list.sort(byRank).map(i => storyHTML(i, "story story-card")).join("")}</div></section>`;
+    first = false;
+  }
+  if (!items.length) {
+    const msg = S.view === "inbox" && !S.q && !S.cat && !S.source
+      ? ["You're all caught up", "New stories appear here after the next update."]
+      : S.view === "saved" ? ["Nothing saved yet", "Press the star on a story (or s) to keep it here."]
+      : ["No stories match", "Try a wider time range or clear the filters."];
+    html = `<div class="empty"><b>${msg[0]}</b>${msg[1]}</div>`;
+  }
+  $("#content").innerHTML = html;
+  S.order = [...document.querySelectorAll("#content .story-card")].map(e => e.dataset.id);
+  if (S.focus >= S.order.length) S.focus = S.order.length - 1;
+  paintFocus(false);
+}
+
+function paintFocus(scroll = true) {
+  document.querySelectorAll(".focused").forEach(e => e.classList.remove("focused"));
+  const id = S.order[S.focus];
+  if (!id) return;
+  const el = document.querySelector(`#content [data-id="${id}"]`);
+  el.classList.add("focused");
+  if (scroll) el.scrollIntoView({block: "nearest", behavior: "smooth"});
+}
+
+async function setFlag(ids, kind, value) {
+  ids.forEach(id => { const it = byId(id); if (it) it[kind === "read" ? "is_read" : "is_saved"] = value; });
+  render();
+  try { await api("/api/" + (kind === "read" ? "read" : "saved"), {ids, value}); }
+  catch { toast("Couldn't save that change. Is the server still running?"); }
+}
+function openStory(id) {
+  const it = byId(id); if (!it) return;
+  window.open(it.link, "_blank", "noopener");
+  if (!it.is_read) { S.keep.add(id); setFlag([id], "read", true); }
+}
+
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
+}
+
+async function loadItems(announce = false) {
+  const before = new Set(S.items.map(i => i.id));
+  S.items = await api("/api/items?days=" + Math.max(S.days, 7));
+  S.loaded = true;
+  if (announce) {
+    const fresh = S.items.filter(i => !before.has(i.id)).length;
+    toast(fresh ? `${fresh} new ${fresh === 1 ? "story" : "stories"}` : "No new stories yet");
+  }
+  render();
+}
+
+function progressLabel(log) {
+  for (let i = log.length - 1; i >= 0; i--) {
+    const m = log[i].match(/\[(\d+)\/(\d+)\]/);
+    if (m) return `Summarizing ${m[1]} of ${m[2]}…`;
+    if (/Fetching/.test(log[i])) return "Fetching feeds…";
+    if (/new\.$/.test(log[i])) return "Preparing summaries…";
+  }
+  return "Updating…";
+}
+
+let pollTimer;
+async function pollStatus() {
+  clearTimeout(pollTimer);
+  let st;
+  try { st = await api("/api/status"); }
+  catch { $("#status-text").textContent = "Can't reach the AI News server. Start it with ./run.sh ui"; pollTimer = setTimeout(pollStatus, 10000); return; }
+  const wasRunning = S.running;
+  S.running = st.running;
+  const btn = $("#refresh");
+  btn.disabled = st.running;
+  btn.querySelector("svg").classList.toggle("spin", st.running);
+  btn.querySelector(".lbl").textContent = st.running ? (st.ui_run ? progressLabel(st.log) : "Updating…") : "Refresh";
+  $("#status").classList.toggle("busy", st.running);
+  const parts = [st.last_run ? `Updated ${ago(st.last_run)}` : "Not updated yet"];
+  if (st.pending) parts.push(`${st.pending} waiting for a summary`);
+  parts.push(`summaries by ${st.model}`);
+  $("#status-text").textContent = st.running ? (st.ui_run ? progressLabel(st.log) : "A scheduled update is running…") : parts.join(" · ");
+  if (S.lastRun !== undefined && st.last_run !== S.lastRun) await loadItems(true);
+  else if (wasRunning && !st.running) await loadItems(true);
+  S.lastRun = st.last_run;
+  pollTimer = setTimeout(pollStatus, st.running ? 1500 : 60000);
+}
+
+async function refresh() {
+  if (S.running) return;
+  try {
+    const r = await api("/api/refresh", {});
+    if (!r.started && r.reason) toast(r.reason);
+  } catch { toast("Couldn't start an update."); }
+  S.running = true;
+  pollStatus();
+}
+
+/* events */
+$("#refresh").onclick = refresh;
+$("#range").onclick = e => { const d = +e.target.dataset.d; if (d) { S.days = d; store.set("days", d); render(); } };
+$("#theme").onclick = () => {
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  const cur = document.documentElement.dataset.theme || (dark ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next; store.set("theme", next);
+};
+let qTimer;
+$("#q").oninput = e => { clearTimeout(qTimer); qTimer = setTimeout(() => { S.q = e.target.value.trim(); S.focus = -1; render(); }, 120); };
+$("#side").onclick = e => {
+  const b = e.target.closest(".nav"); if (!b) return;
+  if (b.dataset.view) { S.view = b.dataset.view; store.set("view", S.view); S.keep.clear(); }
+  if (b.dataset.cat !== undefined) S.cat = S.cat === b.dataset.cat ? null : b.dataset.cat;
+  if (b.dataset.source !== undefined) S.source = S.source === b.dataset.source ? null : b.dataset.source;
+  S.focus = -1; render(); scrollTo({top: 0});
+};
+$("#filters").onclick = e => {
+  const k = e.target.closest("[data-clear]")?.dataset.clear; if (!k) return;
+  if (k === "q") { S.q = ""; $("#q").value = ""; } else S[k] = null;
+  render();
+};
+$("#content").onclick = e => {
+  if (e.target.id === "mark-all") {
+    const ids = S.items.filter(i => inView(i) && matches(i) && !i.is_read).map(i => i.id);
+    S.keep.clear(); setFlag(ids, "read", true); toast(`Marked ${ids.length} as read`); return;
+  }
+  const card = e.target.closest(".story-card"); if (!card) return;
+  const id = card.dataset.id, it = byId(id);
+  S.focus = S.order.indexOf(id);
+  const tag = e.target.closest(".tag");
+  if (tag) { S.q = tag.dataset.tag; $("#q").value = S.q; render(); return; }
+  if (e.target.closest(".title")) { if (!it.is_read) { S.keep.add(id); setFlag([id], "read", true); } return; }
+  const act = e.target.closest(".act")?.dataset.act;
+  if (act === "save") setFlag([id], "saved", !it.is_saved);
+  else if (act === "read") { S.keep.add(id); setFlag([id], "read", !it.is_read); }
+  else paintFocus(false);
+};
+document.addEventListener("keydown", e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.target.matches("input")) { if (e.key === "Escape") e.target.blur(); return; }
+  const id = S.order[S.focus];
+  switch (e.key) {
+    case "j": S.focus = Math.min(S.order.length - 1, S.focus + 1); paintFocus(); break;
+    case "k": S.focus = Math.max(0, S.focus - 1); paintFocus(); break;
+    case "o": case "Enter": if (id) openStory(id); break;
+    case "s": if (id) setFlag([id], "saved", !byId(id).is_saved); break;
+    case "m": if (id) { S.keep.add(id); setFlag([id], "read", !byId(id).is_read); } break;
+    case "/": e.preventDefault(); $("#q").focus(); break;
+    case "r": refresh(); break;
+    default: return;
+  }
+});
+
+const savedTheme = store.get("theme", null);
+if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+render();
+loadItems().then(pollStatus).catch(() => { $("#content").innerHTML = '<div class="empty"><b>Can\'t load stories</b>Start the server with <code>./run.sh ui</code></div>'; pollStatus(); });
+</script>
+</body>
+</html>
